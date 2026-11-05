@@ -20,8 +20,7 @@
 
 ## Інструкція запуску 
 Запуск бази даних PostgreSQL:
-   ```bash
-   docker compose up -d
+   `docker compose up -d`
 
 ## Запуск Java-застосунку:
 1. Запустити метод main у класі DemoApplication.java через VS Code або виконати команду: mvn spring-boot:run
