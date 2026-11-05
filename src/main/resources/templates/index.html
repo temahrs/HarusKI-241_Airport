@@ -7,12 +7,17 @@
         body { font-family: Arial, sans-serif; padding: 20px; }
         .admin-panel { background-color: #ffe4e1; padding: 15px; margin-bottom: 20px; border: 1px solid #ffb6c1; border-radius: 5px;}
         .logout-btn { margin-top: 30px; padding: 10px; background-color: #ddd; border: none; cursor: pointer; }
+        .list-item { margin-bottom: 10px; }
+        .delete-btn { color: red; font-size: 12px; margin-left: 15px; }
     </style>
 </head>
 <body>
     <h1>Інформаційна система авіарейсів</h1>
+    
+
+    
     <div th:if="${isAdmin}" class="admin-panel">
-        <h3>Додати нове місто (ADMIN PRIVILEGES)</h3>
+        <h3>Додати нове місто (ADMIN)</h3>
         <form th:action="@{/cities/add}" method="post">
             <input type="text" name="name" placeholder="Назва міста" required>
             <button type="submit">Додати</button>
@@ -21,27 +26,72 @@
 
     <h2>Міста</h2>
     <ul>
-        <li th:each="city : ${cities}" style="margin-bottom: 10px;">
+        <li th:each="city : ${cities}" class="list-item">
             <strong th:text="${city.name}"></strong>
-            
-            <form th:if="${isAdmin}" th:action="@{/cities/delete/{id}(id=${city.id})}" method="post" style="display:inline; margin-left: 15px;">
-                <button type="submit" style="color:red; font-size: 12px;">Видалити</button>
+            <form th:if="${isAdmin}" th:action="@{/cities/delete/{id}(id=${city.id})}" method="post" style="display:inline;">
+                <button type="submit" class="delete-btn">Видалити</button>
             </form>
         </li>
     </ul>
 
+    <hr>
+
+
+
+    <div th:if="${isAdmin}" class="admin-panel">
+        <h3>Додати аеропорт (ADMIN)</h3>
+        <form th:action="@{/airports/add}" method="post">
+            <input type="text" name="name" placeholder="Назва аеропорту" required>
+            <select name="cityId" required>
+                <option value="" disabled selected>-- Оберіть місто --</option>
+                <option th:each="city : ${cities}" th:value="${city.id}" th:text="${city.name}"></option>
+            </select>
+            <button type="submit">Додати</button>
+        </form>
+    </div>
+
     <h2>Аеропорти</h2>
     <ul>
-        <li th:each="airport : ${airports}" th:text="${airport.name} + ' (' + ${airport.city.name} + ')'"></li>
+        <li th:each="airport : ${airports}" class="list-item">
+            <span th:text="${airport.name} + ' (' + ${airport.city.name} + ')'"></span>
+            <form th:if="${isAdmin}" th:action="@{/airports/delete/{id}(id=${airport.id})}" method="post" style="display:inline;">
+                <button type="submit" class="delete-btn">Видалити</button>
+            </form>
+        </li>
     </ul>
+
+    <hr>
+
+
+
+    <div th:if="${isAdmin}" class="admin-panel">
+        <h3>Додати рейс (ADMIN)</h3>
+        <form th:action="@{/flights/add}" method="post">
+            <input type="text" name="flightNumber" placeholder="Номер" required>
+            <input type="text" name="destination" placeholder="Куди летить" required>
+            <select name="airportId" required>
+                <option value="" disabled selected>-- Аеропорт вильоту --</option>
+                <option th:each="airport : ${airports}" th:value="${airport.id}" th:text="${airport.name}"></option>
+            </select>
+            <button type="submit">Додати</button>
+        </form>
+    </div>
 
     <h2>Рейси</h2>
     <ul>
-        <li th:each="flight : ${flights}" th:text="${flight.flightNumber} + ' -> ' + ${flight.destination} + ' (Аеропорт: ' + ${flight.airport.name} + ')'"></li>
+        <li th:each="flight : ${flights}" class="list-item">
+            <span th:text="${flight.flightNumber} + ' -> ' + ${flight.destination} + ' (Аеропорт: ' + ${flight.airport.name} + ')'"></span>
+            <form th:if="${isAdmin}" th:action="@{/flights/delete/{id}(id=${flight.id})}" method="post" style="display:inline;">
+                <button type="submit" class="delete-btn">Видалити</button>
+            </form>
+        </li>
     </ul>
     
+
+
+
     <form th:action="@{/logout}" method="post">
-        <button class="logout-btn" type="submit">Вийти з акаунта...</button>
+        <button class="logout-btn" type="submit">Вийти з акаунта</button>
     </form>
 </body>
 </html>
