@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Довідник: Міста, Аеропорти, Рейси</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .admin-panel { background-color: #ffe4e1; padding: 15px; margin-bottom: 20px; border: 1px solid #ffb6c1; border-radius: 5px;}
+        .logout-btn { margin-top: 30px; padding: 10px; background-color: #ddd; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Інформаційна система авіарейсів</h1>
+    <div th:if="${isAdmin}" class="admin-panel">
+        <h3>Додати нове місто (ADMIN PRIVILEGES)</h3>
+        <form th:action="@{/cities/add}" method="post">
+            <input type="text" name="name" placeholder="Назва міста" required>
+            <button type="submit">Додати</button>
+        </form>
+    </div>
+
+    <h2>Міста</h2>
+    <ul>
+        <li th:each="city : ${cities}" style="margin-bottom: 10px;">
+            <strong th:text="${city.name}"></strong>
+            
+            <form th:if="${isAdmin}" th:action="@{/cities/delete/{id}(id=${city.id})}" method="post" style="display:inline; margin-left: 15px;">
+                <button type="submit" style="color:red; font-size: 12px;">Видалити</button>
+            </form>
+        </li>
+    </ul>
+
+    <h2>Аеропорти</h2>
+    <ul>
+        <li th:each="airport : ${airports}" th:text="${airport.name} + ' (' + ${airport.city.name} + ')'"></li>
+    </ul>
+
+    <h2>Рейси</h2>
+    <ul>
+        <li th:each="flight : ${flights}" th:text="${flight.flightNumber} + ' -> ' + ${flight.destination} + ' (Аеропорт: ' + ${flight.airport.name} + ')'"></li>
+    </ul>
+    
+    <form th:action="@{/logout}" method="post">
+        <button class="logout-btn" type="submit">Вийти з акаунта...</button>
+    </form>
+</body>
+</html>
