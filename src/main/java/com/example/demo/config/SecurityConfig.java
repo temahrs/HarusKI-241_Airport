@@ -21,7 +21,7 @@ public class SecurityConfig {
         this.userRepository = userRepository;
     }
 
-    @Bean
+    @Bean  // Вход та вихоід 
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
@@ -40,7 +40,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
+    @Bean // Пошук користувача
     public UserDetailsService userDetailsService() {
         return username -> {
             com.example.demo.model.User appUser = userRepository.findByUsername(username)
@@ -54,7 +54,7 @@ public class SecurityConfig {
         };
     }
 
-    @Bean
+    @Bean    // Пароль в Base64 
     public PasswordEncoder passwordEncoder() {
         return new PasswordEncoder() {
             @Override

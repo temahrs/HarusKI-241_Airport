@@ -33,7 +33,7 @@ public class WebController {
         return "index";
     }
 
-    //МІСТО
+// Відображення головної сторінки
     @PostMapping("/cities/add")
     public String addCity(@RequestParam String name, HttpServletRequest request) {
         if (request.isUserInRole("ADMIN")) {
@@ -43,6 +43,20 @@ public class WebController {
         }
         return "redirect:/";
     }
+
+    
+    // Редагування міста
+    @PostMapping("/cities/update/{id}")
+    public String updateCity(@PathVariable Long id, @RequestParam String name, HttpServletRequest request) {
+        if (request.isUserInRole("ADMIN")) {
+            cityRepository.findById(id).ifPresent(city -> {
+                city.setName(name);
+                cityRepository.save(city);
+            });
+        }
+        return "redirect:/";
+    }
+
 
     @PostMapping("/cities/delete/{id}")
     public String deleteCity(@PathVariable Long id, HttpServletRequest request) {
@@ -66,6 +80,24 @@ public class WebController {
         return "redirect:/";
     }
 
+
+    // Редагування аеропорту
+    @PostMapping("/airports/update/{id}")
+    public String updateAirport(@PathVariable Long id, @RequestParam String name,
+                                @RequestParam Long cityId, HttpServletRequest request) {
+        if (request.isUserInRole("ADMIN")) {
+            airportRepository.findById(id).ifPresent(airport -> {
+                cityRepository.findById(cityId).ifPresent(city -> {
+                    airport.setName(name);
+                    airport.setCity(city);
+                    airportRepository.save(airport);
+                });
+            });
+        }
+        return "redirect:/";
+    }
+
+
     @PostMapping("/airports/delete/{id}")
     public String deleteAirport(@PathVariable Long id, HttpServletRequest request) {
         if (request.isUserInRole("ADMIN")) {
@@ -88,6 +120,26 @@ public class WebController {
         }
         return "redirect:/";
     }
+
+    
+    // Редагування рейсу
+    @PostMapping("/flights/update/{id}")
+    public String updateFlight(@PathVariable Long id, @RequestParam String flightNumber,
+                               @RequestParam String destination, @RequestParam Long airportId,
+                               HttpServletRequest request) {
+        if (request.isUserInRole("ADMIN")) {
+            flightRepository.findById(id).ifPresent(flight -> {
+                airportRepository.findById(airportId).ifPresent(airport -> {
+                    flight.setFlightNumber(flightNumber);
+                    flight.setDestination(destination);
+                    flight.setAirport(airport);
+                    flightRepository.save(flight);
+                });
+            });
+        }
+        return "redirect:/";
+    }
+
 
     @PostMapping("/flights/delete/{id}")
     public String deleteFlight(@PathVariable Long id, HttpServletRequest request) {

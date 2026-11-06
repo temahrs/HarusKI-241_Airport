@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -13,11 +14,10 @@
 </head>
 <body>
     <h1>Інформаційна система авіарейсів</h1>
-    
 
-    
+    <!-- МІСТА -->
     <div th:if="${isAdmin}" class="admin-panel">
-        <h3>Додати нове місто (ADMIN)</h3>
+        <h3>Додати нове місто</h3>
         <form th:action="@{/cities/add}" method="post">
             <input type="text" name="name" placeholder="Назва міста" required>
             <button type="submit">Додати</button>
@@ -28,18 +28,27 @@
     <ul>
         <li th:each="city : ${cities}" class="list-item">
             <strong th:text="${city.name}"></strong>
+
             <form th:if="${isAdmin}" th:action="@{/cities/delete/{id}(id=${city.id})}" method="post" style="display:inline;">
                 <button type="submit" class="delete-btn">Видалити</button>
             </form>
+
+            <!-- Редагування міста -->
+            <details th:if="${isAdmin}">
+                <summary>Редагувати</summary>
+                <form th:action="@{/cities/update/{id}(id=${city.id})}" method="post">
+                    <input type="text" name="name" th:value="${city.name}" required>
+                    <button type="submit">Зберегти</button>
+                </form>
+            </details>
         </li>
     </ul>
 
     <hr>
 
-
-
+    <!-- АЕРОПОРТИ -->
     <div th:if="${isAdmin}" class="admin-panel">
-        <h3>Додати аеропорт (ADMIN)</h3>
+        <h3>Додати аеропорт</h3>
         <form th:action="@{/airports/add}" method="post">
             <input type="text" name="name" placeholder="Назва аеропорту" required>
             <select name="cityId" required>
@@ -54,16 +63,34 @@
     <ul>
         <li th:each="airport : ${airports}" class="list-item">
             <span th:text="${airport.name} + ' (' + ${airport.city.name} + ')'"></span>
+
             <form th:if="${isAdmin}" th:action="@{/airports/delete/{id}(id=${airport.id})}" method="post" style="display:inline;">
                 <button type="submit" class="delete-btn">Видалити</button>
             </form>
+
+            <!-- Редагування аеропорту -->
+            <details th:if="${isAdmin}">
+                <summary>Редагувати</summary>
+                <form th:action="@{/airports/update/{id}(id=${airport.id})}" method="post">
+                    <input type="text" name="name" th:value="${airport.name}" required>
+
+                    <select name="cityId" required>
+                        <option th:each="city : ${cities}"
+                                th:value="${city.id}"
+                                th:text="${city.name}"
+                                th:selected="${city.id == airport.city.id}">
+                        </option>
+                    </select>
+
+                    <button type="submit">Зберегти</button>
+                </form>
+            </details>
         </li>
     </ul>
 
     <hr>
 
-
-
+    <!-- РЕЙСИ -->
     <div th:if="${isAdmin}" class="admin-panel">
         <h3>Додати рейс (ADMIN)</h3>
         <form th:action="@{/flights/add}" method="post">
@@ -81,15 +108,33 @@
     <ul>
         <li th:each="flight : ${flights}" class="list-item">
             <span th:text="${flight.flightNumber} + ' -> ' + ${flight.destination} + ' (Аеропорт: ' + ${flight.airport.name} + ')'"></span>
+
             <form th:if="${isAdmin}" th:action="@{/flights/delete/{id}(id=${flight.id})}" method="post" style="display:inline;">
                 <button type="submit" class="delete-btn">Видалити</button>
             </form>
+
+            <!-- Редагування рейсу -->
+            <details th:if="${isAdmin}">
+                <summary>Редагувати</summary>
+                <form th:action="@{/flights/update/{id}(id=${flight.id})}" method="post">
+                    <input type="text" name="flightNumber" th:value="${flight.flightNumber}" required>
+                    <input type="text" name="destination" th:value="${flight.destination}" required>
+
+                    <select name="airportId" required>
+                        <option th:each="airport : ${airports}"
+                                th:value="${airport.id}"
+                                th:text="${airport.name}"
+                                th:selected="${airport.id == flight.airport.id}">
+                        </option>
+                    </select>
+
+                    <button type="submit">Зберегти</button>
+                </form>
+            </details>
         </li>
     </ul>
-    
 
-
-
+    <!-- ВИХІД -->
     <form th:action="@{/logout}" method="post">
         <button class="logout-btn" type="submit">Вийти з акаунта</button>
     </form>
